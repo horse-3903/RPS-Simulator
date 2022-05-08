@@ -16,7 +16,7 @@ class RPS:
     self.root.title("Probability : Dissected")
 
     self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors"])
-    self.images = [ImageTk.PhotoImage(Image.open("rock.png").resize((100,100))),ImageTk.PhotoImage(Image.open("paper.png").resize((100,100))),ImageTk.PhotoImage(Image.open("scissors.png").resize((100,100)))]
+    self.images = [ImageTk.PhotoImage(Image.open("./RPS-3/src/images/rock.png").resize((100,100))),ImageTk.PhotoImage(Image.open("RPS-3/src/images/paper.png").resize((100,100))),ImageTk.PhotoImage(Image.open("RPS-3/src/images/scissors.png").resize((100,100)))]
     self.running = False
 
     # parameter frame
