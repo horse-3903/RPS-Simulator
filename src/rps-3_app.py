@@ -12,17 +12,22 @@ class RPS:
   def __init__(self,root):
     self.root = root
     self.root.config(bg="white")
-    self.root.geometry("653x610")
+    self.root.geometry("700x610")
     self.root.title("Probability : Dissected")
 
     self.root.focus_set()
 
-    self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors"])
+    self.frame = Frame(root,bg="white")
+    self.frame.place(relx=0.5,rely=0.35,anchor="c")
+    
+    self.allchoicecols = ["No. of Rocks","No. of Papers","No. of Scissors","No. of Glues","No. of Pens"]
+
+    self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[:3])
     self.images = [ImageTk.PhotoImage(Image.open(image).resize((100,100))) for image in [f"./src/images/{path}.png" for path in ["rock","paper","scissors","glue","pen"]]]
     self.running = False
 
     # parameter frame
-    self.paraframe = LabelFrame(self.root,bg="white",text="Parameters",labelanchor="n")
+    self.paraframe = LabelFrame(self.frame,bg="white",text="Parameters",labelanchor="n")
     self.paraframe.grid(row=0,column=0,padx=5,pady=5)
 
     # number of options
@@ -124,7 +129,7 @@ class RPS:
     
 
     # simulation frame
-    self.simframe = LabelFrame(self.root,bg="white",text="Simulation",labelanchor="n")
+    self.simframe = LabelFrame(self.frame,bg="white",text="Simulation",labelanchor="n")
     self.simframe.grid(row=0,column=1,padx=5,pady=5)
 
     # player 1 canvas
@@ -162,30 +167,27 @@ class RPS:
 
 
     # statistics frame
-    self.statsframe = LabelFrame(self.root,bg="white",text="Statistics",labelanchor="n")
-    self.statsframe.grid(row=2,column=0,columnspan=2,padx=5,pady=5)
+    self.statsframe = LabelFrame(self.frame,bg="white",text="Statistics",labelanchor="n")
+    self.statsframe.grid(row=2,column=0,columnspan=2,pady=5)
 
     # statistics table
     self.statstable = Treeview(self.statsframe,height=2,padding=5)
     self.statstable.grid(row=0,column=0,columnspan=2,padx=5,pady=5)
 
     # table columns
-    self.statstable["columns"] = ("","No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors")
+    self.statstable["columns"] = ("","No. of Wins","No. of Draws","Win Rate")+tuple(self.allchoicecols[0:int(self.optno.get())])
+    self.statstable["displaycolumns"] = "#all"
 
     self.statstable.column("#0",width=0,stretch=NO)
     self.statstable.heading("#0",text="",anchor=CENTER)
 
-    for i in self.statstable["columns"]:
-      if i == "Win Percentage":
-        self.statstable.column(i,anchor=CENTER,width=95)
-      else:
-        self.statstable.column(i,anchor=CENTER,width=87)
-
-      self.statstable.heading(i,anchor=CENTER,text=i)
+    for col in self.statstable["columns"]:
+      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(630/len(self.statstable["columns"])))
+      self.statstable.heading(col,anchor=CENTER,text=col)
 
     # inserting values
-    self.statstable.insert(parent="",index=END,iid=1,text="",values=("Player 1",0,0,"0%",0,0,0))
-    self.statstable.insert(parent="",index=END,iid=2,text="",values=("Player 2",0,0,"0%",0,0,0))
+    self.statstable.insert(parent="",index=END,iid=1,text="",values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
+    self.statstable.insert(parent="",index=END,iid=2,text="",values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
 
     # graph frame
     self.graphframe = LabelFrame(self.statsframe,bg="white",text="Graph 1",labelanchor="n")
@@ -198,29 +200,31 @@ class RPS:
         self.runnum = int(self.runval.get())
         self.runtemp = self.runnum 
 
+        if self.runnum != 0:
         # resetting data
-        self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors"])
-        self.statstable.item(item=1,values=("Player 1",0,0,"0%",0,0,0))
-        self.statstable.item(item=2,values=("Player 2",0,0,"0%",0,0,0))
+          self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate","No. of Rocks","No. of Papers","No. of Scissors"])
+          self.statstable.item(item=1,values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
+          self.statstable.item(item=2,values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
 
-        if self.paused:
-          self.paused = False
-          self.pausebutton.config(text="Pause")
+          if self.paused:
+            self.paused = False
+            self.pausebutton.config(text="Pause")
 
-        # get all probabilities
-        self.play1prob = [float(i[1].get()) for i in self.play1probw]
-        self.play2prob = [float(i[1].get()) for i in self.play2probw]
+          # get all probabilities
+          self.play1prob = [float(i[1].get()) for i in self.play1probw[0:int(self.optno.get())]]
+          self.play2prob = [float(i[1].get()) for i in self.play2probw[0:int(self.optno.get())]]
 
-        # check that probabilities add to 1
-        if round(sum(self.play1prob)) == 1 and round(sum(self.play2prob)) == 1:
-          # start loop
-          self.running = True
-          self.loop()
-        else:
-          showerror(title="Invalid Probability Inputs",message="Probability rates do not add up to 1")
+          # check that probabilities add to 1
+          if round(sum(self.play1prob)) == 1 and round(sum(self.play2prob)) == 1:
+            # start loop
+            self.running = True
+            self.loop()
+          else:
+            showerror(title="Invalid Probability Inputs",message=f"Probability rates do not add up to 1")
 
     except ValueError:
       showerror(title="Invalid Run Number Input",message="The value you inputted was invalid.\nPlease enter a number.")
+
 
   def pause(self):
     self.paused = not self.paused
@@ -237,25 +241,23 @@ class RPS:
       # display run number
       self.runnumvar.set(abs(self.runtemp-self.runnum+1))
 
+      self.choicedict = {
+        0 : "Rocks",
+        1 : "Papers",
+        2 : "Scissors",
+        3 : "Glues",
+        4 : "Pens"
+      }
+
       # choose player 1
       play1 = self.choose(self.play1prob,1)
 
-      if play1 == 0:
-        self.update(1,"No. of Rocks")
-      elif play1 == 1:
-        self.update(1,"No. of Papers")
-      elif play1 == 2:
-        self.update(1,"No. of Scissors")
+      self.update(1,f"No. of {self.choicedict[play1]}")
 
       # choose player 2
       play2 = self.choose(self.play2prob,2)
 
-      if play2 == 0:
-        self.update(2,"No. of Rocks")
-      elif play2 == 1:
-        self.update(2,"No. of Papers")
-      elif play2 == 2:
-        self.update(2,"No. of Scissors")
+      self.update(2,f"No. of {self.choicedict[play2]}")
 
       self.compare(play1,play2)
 
@@ -269,27 +271,17 @@ class RPS:
         
 
   def choose(self,prob:list,player:int):
-    # rock - 0, paper - 1, scissors - 2
+    # rock - 0, paper - 1, scissors - 2, glue - 4, pen - 5
     choice = (list(np.random.multinomial(1,prob))).index(1)
 
     if player == 1:
       self.play1canvas.delete("all")
-      if choice == 0:
-        self.play1canvas.create_image(0,0,anchor="nw",image=self.images[0])
-      elif choice == 1:
-        self.play1canvas.create_image(0,0,anchor="nw",image=self.images[1])
-      elif choice == 2:
-        self.play1canvas.create_image(0,0,anchor="nw",image=self.images[2])
+      self.play1canvas.create_image(0,0,anchor="nw",image=self.images[choice])
 
     elif player == 2:
       self.play2canvas.delete("all")
-      if choice == 0:
-        self.play2canvas.create_image(0,0,anchor="nw",image=self.images[0])
-      elif choice == 1:
-        self.play2canvas.create_image(0,0,anchor="nw",image=self.images[1])
-      elif choice == 2:
-        self.play2canvas.create_image(0,0,anchor="nw",image=self.images[2])
-
+      self.play2canvas.create_image(0,0,anchor="nw",image=self.images[choice])
+      
     return choice
     
   def compare(self,p1:int,p2:int):
@@ -298,6 +290,8 @@ class RPS:
       self.update(1,"No. of Draws")
       self.update(2,"No. of Draws")
       self.wonplayerlabel.config(text="Draw")
+
+    # add conditions for rps-4 and rps-5
       
     elif (p1 == 0 and p2 == 1) or (p1 == 1 and p2 == 2) or (p1 == 2 and p2 == 0):
       # player 2 wins
@@ -338,7 +332,7 @@ class RPS:
 
       self.statstable.item(item=2,values=("Player 2",)+temptuple)
 
-    self.df.at[player-1,"Win Percentage"] = round(((self.df.at[player-1,"No. of Wins"])/abs(self.runtemp-self.runnum+1))*100,2)
+    self.df.at[player-1,"Win Rate"] = round(((self.df.at[player-1,"No. of Wins"])/abs(self.runtemp-self.runnum+1))*100,2)
     
 
   def display(self):
@@ -346,6 +340,24 @@ class RPS:
     # print(graphs)
 
   def setoption(self):
+    self.statstable["columns"] = ("","No. of Wins","No. of Draws","Win Rate")+tuple(self.allchoicecols[0:int(self.optno.get())])
+
+    self.statstable.column("#0",width=0,stretch=NO)
+    self.statstable.heading("#0",text="",anchor=CENTER)
+
+    for item in self.statstable.get_children():
+      self.statstable.delete(item)
+      
+    self.statstable.insert(parent="",index=END,iid=1,text="",values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
+    self.statstable.insert(parent="",index=END,iid=2,text="",values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
+
+    for col in self.statstable["columns"]:
+      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(630/len(self.statstable["columns"])))
+      self.statstable.heading(col,anchor=CENTER,text=col)
+
+    self.statstable["displaycolumns"] = "#all"
+    
+
     for widget in self.play1para.winfo_children():
       widget.grid_forget()
 
