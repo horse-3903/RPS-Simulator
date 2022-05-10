@@ -12,13 +12,13 @@ class RPS:
   def __init__(self,root):
     self.root = root
     self.root.config(bg="white")
-    self.root.geometry("700x610")
+    self.root.geometry("800x700")
     self.root.title("Probability : Dissected")
 
     self.root.focus_set()
 
     self.frame = Frame(root,bg="white")
-    self.frame.place(relx=0.5,rely=0.35,anchor="c")
+    self.frame.place(relx=0.5,rely=0.4,anchor="c")
     
     self.allchoicecols = ["No. of Rocks","No. of Papers","No. of Scissors","No. of Glues","No. of Pens"]
 
@@ -174,6 +174,8 @@ class RPS:
     self.statstable = Treeview(self.statsframe,height=2,padding=5)
     self.statstable.grid(row=0,column=0,columnspan=2,padx=5,pady=5)
 
+    self.statstablesize = self.root.winfo_width() - 30
+
     # table columns
     self.statstable["columns"] = ("","No. of Wins","No. of Draws","Win Rate")+tuple(self.allchoicecols[0:int(self.optno.get())])
     self.statstable["displaycolumns"] = "#all"
@@ -182,7 +184,7 @@ class RPS:
     self.statstable.heading("#0",text="",anchor=CENTER)
 
     for col in self.statstable["columns"]:
-      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(630/len(self.statstable["columns"])))
+      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(self.statstablesize/len(self.statstable["columns"])))
       self.statstable.heading(col,anchor=CENTER,text=col)
 
     # inserting values
@@ -352,7 +354,7 @@ class RPS:
     self.statstable.insert(parent="",index=END,iid=2,text="",values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
 
     for col in self.statstable["columns"]:
-      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(630/len(self.statstable["columns"])))
+      self.statstable.column(col,anchor=CENTER,stretch=NO,width=int(self.statstablesize/len(self.statstable["columns"])))
       self.statstable.heading(col,anchor=CENTER,text=col)
 
     self.statstable["displaycolumns"] = "#all"
