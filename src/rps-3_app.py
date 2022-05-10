@@ -18,7 +18,7 @@ class RPS:
     self.root.focus_set()
 
     self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors"])
-    self.images = [ImageTk.PhotoImage(Image.open("./src/images/rock.png").resize((100,100))),ImageTk.PhotoImage(Image.open("./src/images/paper.png").resize((100,100))),ImageTk.PhotoImage(Image.open("./src/images/scissors.png").resize((100,100)))]
+    self.images = [ImageTk.PhotoImage(Image.open(image).resize((100,100))) for image in [f"./src/images/{path}.png" for path in ["rock","paper","scissors","glue","pen"]]]
     self.running = False
 
     # parameter frame
@@ -28,7 +28,7 @@ class RPS:
     # number of options
     self.optlabel = Label(self.paraframe,text="RPS :",bg="white")
     self.optlabel.grid(row=0,column=0,padx=5,pady=5)
-    self.optno = Spinbox(self.paraframe,from_=3,to=4,command=lambda: self.setoption(),relief=GROOVE,bd=2)
+    self.optno = Spinbox(self.paraframe,from_=3,to=5,command=lambda: self.setoption(),relief=GROOVE,bd=2)
     self.optno.grid(row=0,column=1,padx=5,pady=5)
 
     # player 1 parameters
@@ -50,6 +50,10 @@ class RPS:
       ],
       [
         Label(self.play1para,bg="white",text="Glue :"),
+        Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play1para,bg="white",text="Pen :"),
         Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
       ]]
 
@@ -80,6 +84,10 @@ class RPS:
       ],
       [
         Label(self.play2para,bg="white",text="Glue :"),
+        Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play2para,bg="white",text="Pen :"),
         Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
       ]]
 
@@ -350,7 +358,7 @@ class RPS:
 
     for label,entry in self.play1probw:
       entry.delete(0,END)
-      entry.insert(0,str(round(1/int(self.optno.get()),2)))
+      entry.insert(0,f"{round(1/int(self.optno.get()),2):.2f}")
 
     for row in range(int(self.optno.get())):
       for col in range(2):
@@ -358,9 +366,7 @@ class RPS:
 
     for label,entry in self.play2probw:
       entry.delete(0,END)
-      entry.insert(0,str(round(1/int(self.optno.get()),2)))
-    
-
+      entry.insert(0,f"{round(1/int(self.optno.get()),2):.2f}")
 
 root = Tk()
 RPSwin = RPS(root)
