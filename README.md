@@ -21,4 +21,4 @@ You can convert your code into an `.exe` file, though you have to change the dir
     - Author [Kiranshastry](https://www.flaticon.com/authors/kiranshastry) for `./src/images/pen.png`
     - Author [Freepik](https://www.flaticon.com/authors/freepik) for the rest of the images in `./src/images`
 
-*To be Added*
+*To be updated*
