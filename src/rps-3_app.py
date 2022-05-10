@@ -15,92 +15,104 @@ class RPS:
     self.root.geometry("653x610")
     self.root.title("Probability : Dissected")
 
+    self.root.focus_set()
+
     self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Percentage","No. of Rocks","No. of Papers","No. of Scissors"])
-    self.images = [ImageTk.PhotoImage(Image.open("./RPS-3/src/images/rock.png").resize((100,100))),ImageTk.PhotoImage(Image.open("RPS-3/src/images/paper.png").resize((100,100))),ImageTk.PhotoImage(Image.open("RPS-3/src/images/scissors.png").resize((100,100)))]
+    self.images = [ImageTk.PhotoImage(Image.open("./src/images/rock.png").resize((100,100))),ImageTk.PhotoImage(Image.open("./src/images/paper.png").resize((100,100))),ImageTk.PhotoImage(Image.open("./src/images/scissors.png").resize((100,100)))]
     self.running = False
 
     # parameter frame
     self.paraframe = LabelFrame(self.root,bg="white",text="Parameters",labelanchor="n")
     self.paraframe.grid(row=0,column=0,padx=5,pady=5)
 
+    # number of options
+    self.optlabel = Label(self.paraframe,text="RPS :",bg="white")
+    self.optlabel.grid(row=0,column=0,padx=5,pady=5)
+    self.optno = Spinbox(self.paraframe,from_=3,to=4,command=lambda: self.setoption(),relief=GROOVE,bd=2)
+    self.optno.grid(row=0,column=1,padx=5,pady=5)
+
     # player 1 parameters
     self.play1para = LabelFrame(self.paraframe,bg="white",text="Player 1",labelanchor="n")
-    self.play1para.grid(row=0,column=0,padx=5,pady=5)
+    self.play1para.grid(row=1,column=0,padx=5,pady=5)
 
-    # player 1 - rock
-    self.play1rlabel = Label(self.play1para,bg="white",text="Rock :")
-    self.play1rlabel.grid(row=0,column=0,padx=5,pady=5)
-    self.play1r = Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
-    self.play1r.grid(row=0,column=1,padx=5,pady=5)
+    self.play1probw = [
+      [
+        Label(self.play1para,bg="white",text="Rock :"),
+        Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play1para,bg="white",text="Paper :"),
+        Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play1para,bg="white",text="Scissors :"),
+        Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play1para,bg="white",text="Glue :"),
+        Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ]]
 
-    # player 1 - paper
-    self.play1plabel = Label(self.play1para,bg="white",text="Paper :")
-    self.play1plabel.grid(row=1,column=0,padx=5,pady=5)
-    self.play1p = Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
-    self.play1p.grid(row=1,column=1,padx=5,pady=5)
+    for row in range(int(self.optno.get())):
+      for col in range(2):
+        self.play1probw[row][col].grid(row=row,column=col,padx=5,pady=5)
 
-    # player 1 - scissors
-    self.play1slabel = Label(self.play1para,bg="white",text="Scissors :")
-    self.play1slabel.grid(row=2,column=0,padx=5,pady=5)
-    self.play1s = Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
-    self.play1s.grid(row=2,column=1,padx=5,pady=5)
-
-    self.play1entry = [self.play1r,self.play1p,self.play1s]
-
-    for i in self.play1entry:
-      i.delete(0,END)
-      i.insert(0,"0.33")
+    for label,entry in self.play1probw:
+      entry.delete(0,END)
+      entry.insert(0,"0.33")
     
     # player 2 parameters
     self.play2para = LabelFrame(self.paraframe,bg="white",text="Player 2",labelanchor="n")
-    self.play2para.grid(row=0,column=1,padx=5,pady=5)
+    self.play2para.grid(row=1,column=1,padx=5,pady=5)
 
-    # player 2 - rock
-    self.play2rlabel = Label(self.play2para,bg="white",text="Rock :")
-    self.play2rlabel.grid(row=0,column=0,padx=5,pady=5)
-    self.play2r = Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
-    self.play2r.grid(row=0,column=1,padx=5,pady=5)
+    self.play2probw = [
+      [
+        Label(self.play2para,bg="white",text="Rock :"),
+        Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play2para,bg="white",text="Paper :"),
+        Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play2para,bg="white",text="Scissors :"),
+        Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ],
+      [
+        Label(self.play2para,bg="white",text="Glue :"),
+        Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
+      ]]
 
-    # player 2 - paper
-    self.play2plabel = Label(self.play2para,bg="white",text="Paper :")
-    self.play2plabel.grid(row=1,column=0,padx=5,pady=5)
-    self.play2p = Spinbox(self.play2para,bg="white",from_=0,to=1,increment=0.01,width=5)
-    self.play2p.grid(row=1,column=1,padx=5,pady=5)
+    for row in range(int(self.optno.get())):
+      for col in range(2):
+        self.play2probw[row][col].grid(row=row,column=col,padx=5,pady=5)
 
-    # player 2 - scissors
-    self.play2slabel = Label(self.play2para,bg="white",text="Scissors :")
-    self.play2slabel.grid(row=2,column=0,padx=5,pady=5)
-    self.play2s = Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
-    self.play2s.grid(row=2,column=1,padx=5,pady=5)
-
-    self.play2entry = [self.play2r,self.play2p,self.play2s]
-
-    for i in self.play2entry:
-      i.delete(0,END)
-      i.insert(0,"0.33")
+    for label,entry in self.play2probw:
+      entry.delete(0,END)
+      entry.insert(0,"0.33")
 
     # number of runs
     self.runlabel = Label(self.paraframe, bg="white",text="Number of Runs : ")
-    self.runlabel.grid(row=1,column=0,padx=5,pady=5)
-    self.runval = Spinbox(self.paraframe,bg="white",from_=1000,to=100000,increment=500,width=10)
-    self.runval.grid(row=1,column=1,padx=5,pady=5)
+    self.runlabel.grid(row=2,column=0,padx=5,pady=5)
+    self.runval = Spinbox(self.paraframe,bg="white",from_=1000,to=100000,increment=500,width=10,relief=GROOVE,bd=2)
+    self.runval.grid(row=2,column=1,padx=5,pady=5)
 
     # graph option label
     self.graphoptlabel = Label(self.paraframe,bg="white",text="Graph Options :")
-    self.graphoptlabel.grid(row=2,column=0,padx=5,pady=5)
+    self.graphoptlabel.grid(row=3,column=0,padx=5,pady=5)
 
     # graph options
     self.graphopttable = ChecklistCombobox(self.paraframe,values=("Pie Chart","Line Graph"))
-    self.graphopttable.grid(row=2,column=1,padx=5,pady=5)
+    self.graphopttable.grid(row=3,column=1,padx=5,pady=5)
 
     # run button
     self.runbutton = Button(self.paraframe,bg="white",text="Run",width=15,font="helvetica 10",command=lambda: self.run(),relief=GROOVE)
-    self.runbutton.grid(row=3,column=0,padx=5,pady=5)
+    self.runbutton.grid(row=4,column=0,padx=5,pady=5)
 
     # pause button
     self.paused = False
     self.pausebutton = Button(self.paraframe,bg="white",text="Pause",width=15,font="helvetica 10",command=lambda: self.pause(),relief=GROOVE)
-    self.pausebutton.grid(row=3,column=1,padx=5,pady=5)
+    self.pausebutton.grid(row=4,column=1,padx=5,pady=5)
     
 
     # simulation frame
@@ -188,8 +200,8 @@ class RPS:
           self.pausebutton.config(text="Pause")
 
         # get all probabilities
-        self.play1prob = [float(i.get()) for i in self.play1entry]
-        self.play2prob = [float(i.get()) for i in self.play2entry]
+        self.play1prob = [float(i[1].get()) for i in self.play1probw]
+        self.play2prob = [float(i[1].get()) for i in self.play2probw]
 
         # check that probabilities add to 1
         if round(sum(self.play1prob)) == 1 and round(sum(self.play2prob)) == 1:
@@ -324,6 +336,29 @@ class RPS:
   def display(self):
     graphs = [self.graphopttable.get()] if type(self.graphopttable.get()) != list else self.graphopttable.get()
     # print(graphs)
+
+  def setoption(self):
+    for widget in self.play1para.winfo_children():
+      widget.grid_forget()
+
+    for widget in self.play2para.winfo_children():
+      widget.grid_forget()
+
+    for row in range(int(self.optno.get())):
+      for col in range(2):
+        self.play1probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+
+    for label,entry in self.play1probw:
+      entry.delete(0,END)
+      entry.insert(0,str(round(1/int(self.optno.get()),2)))
+
+    for row in range(int(self.optno.get())):
+      for col in range(2):
+        self.play2probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+
+    for label,entry in self.play2probw:
+      entry.delete(0,END)
+      entry.insert(0,str(round(1/int(self.optno.get()),2)))
     
 
 
