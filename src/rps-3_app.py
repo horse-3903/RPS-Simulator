@@ -5,14 +5,17 @@ from checklistcombobox import ChecklistCombobox
 import numpy as np
 import pandas as pd
 from PIL import Image, ImageTk
+import os
 # from matplotlib.figure import Figure
 # from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
+os.system("cls")
 
 class RPS:
   def __init__(self,root):
     self.root = root
     self.root.config(bg="white")
-    self.root.geometry("800x700")
+    self.root.geometry("830x700")
     self.root.title("Probability : Dissected")
 
     self.root.focus_set()
@@ -31,7 +34,7 @@ class RPS:
     self.paraframe.grid(row=0,column=0,padx=5,pady=5)
 
     # number of options
-    self.optlabel = Label(self.paraframe,text="RPS :",bg="white")
+    self.optlabel = Label(self.paraframe,text="RPS :",bg="white",font="roboto 16 bold")
     self.optlabel.grid(row=0,column=0,padx=5,pady=5)
     self.optno = Spinbox(self.paraframe,from_=3,to=5,command=lambda: self.setoption(),relief=GROOVE,bd=2)
     self.optno.grid(row=0,column=1,padx=5,pady=5)
@@ -61,10 +64,23 @@ class RPS:
         Label(self.play1para,bg="white",text="Pen :"),
         Spinbox(self.play1para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
       ]]
-
-    for row in range(int(self.optno.get())):
+      
+    # first three
+    for row in range(3):
       for col in range(2):
         self.play1probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+    
+    # next 2 (to be 3)
+    for row in range(3,5):
+      for col in range(2,4):
+        self.play1probw[row][col-2].grid(row=row-3,column=col,padx=5,pady=5)
+
+    for widget in self.play1probw[int(self.optno.get()):]:
+      widget[0].grid_forget()
+      widget[1].grid_forget()
+    
+    self.tempframe1 = Label(self.play1para,bg="white",fg="white",text="temporaryframe1")
+    self.tempframe1.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play1probw:
       entry.delete(0,END)
@@ -96,9 +112,22 @@ class RPS:
         Spinbox(self.play2para,bg="white",from_=0.0,to=1.0,increment=0.01,width=5)
       ]]
 
-    for row in range(int(self.optno.get())):
+    # first three
+    for row in range(3):
       for col in range(2):
         self.play2probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+    
+    # next 2 (to be 3)
+    for row in range(3,5):
+      for col in range(2,4):
+        self.play2probw[row][col-2].grid(row=row-3,column=col,padx=5,pady=5)
+        
+    for widget in self.play2probw[int(self.optno.get()):]:
+      widget[0].grid_forget()
+      widget[1].grid_forget()
+
+    self.tempframe2 = Label(self.play2para,bg="white",fg="white",text="temporaryframe2")
+    self.tempframe2.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play2probw:
       entry.delete(0,END)
@@ -204,7 +233,7 @@ class RPS:
 
         if self.runnum != 0:
         # resetting data
-          self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate","No. of Rocks","No. of Papers","No. of Scissors"])
+          self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[0:int(self.optno.get())])
           self.statstable.item(item=1,values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
           self.statstable.item(item=2,values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
 
@@ -359,24 +388,53 @@ class RPS:
 
     self.statstable["displaycolumns"] = "#all"
     
-
     for widget in self.play1para.winfo_children():
       widget.grid_forget()
 
     for widget in self.play2para.winfo_children():
       widget.grid_forget()
 
-    for row in range(int(self.optno.get())):
+    # first three
+    for row in range(3):
       for col in range(2):
         self.play1probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+    
+    # next 2 (to be 3)
+    for row in range(3,5):
+      for col in range(2,4):
+        self.play1probw[row][col-2].grid(row=row-3,column=col,padx=5,pady=5)
+        
+    for widget in self.play1probw[int(self.optno.get()):]:
+      widget[0].grid_forget()
+      widget[1].grid_forget()
+
+    if int(self.optno.get()) == 3:
+      self.tempframe1.grid(row=0,column=2,columnspan=2)
+    else:
+      self.tempframe1.grid_forget()
 
     for label,entry in self.play1probw:
       entry.delete(0,END)
       entry.insert(0,f"{round(1/int(self.optno.get()),2):.2f}")
 
-    for row in range(int(self.optno.get())):
+    # first three
+    for row in range(3):
       for col in range(2):
         self.play2probw[row][col].grid(row=row,column=col,padx=5,pady=5)
+    
+    # next 2 (to be 3)
+    for row in range(3,5):
+      for col in range(2,4):
+        self.play2probw[row][col-2].grid(row=row-3,column=col,padx=5,pady=5)
+        
+    for widget in self.play2probw[int(self.optno.get()):]:
+      widget[0].grid_forget()
+      widget[1].grid_forget()
+
+    if int(self.optno.get()) == 3:
+      self.tempframe2.grid(row=0,column=2,columnspan=2)
+    else:
+      self.tempframe2.grid_forget()
 
     for label,entry in self.play2probw:
       entry.delete(0,END)
