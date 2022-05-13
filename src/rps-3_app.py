@@ -34,7 +34,7 @@ class RPS:
     self.paraframe.grid(row=0,column=0,padx=5,pady=5)
 
     # number of options
-    self.optlabel = Label(self.paraframe,text="RPS :",bg="white",font="roboto 16 bold")
+    self.optlabel = Label(self.paraframe,text="RPS :",bg="white",font="roboto 12")
     self.optlabel.grid(row=0,column=0,padx=5,pady=5)
     self.optno = Spinbox(self.paraframe,from_=3,to=5,command=lambda: self.setoption(),relief=GROOVE,bd=2)
     self.optno.grid(row=0,column=1,padx=5,pady=5)
@@ -79,7 +79,7 @@ class RPS:
       widget[0].grid_forget()
       widget[1].grid_forget()
     
-    self.tempframe1 = Label(self.play1para,bg="white",fg="white",text="temporaryframe1")
+    self.tempframe1 = Label(self.play1para,bg="white",fg="white",text="temporary frame ")
     self.tempframe1.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play1probw:
@@ -126,7 +126,7 @@ class RPS:
       widget[0].grid_forget()
       widget[1].grid_forget()
 
-    self.tempframe2 = Label(self.play2para,bg="white",fg="white",text="temporaryframe2")
+    self.tempframe2 = Label(self.play2para,bg="white",fg="white",text="temporary frame ")
     self.tempframe2.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play2probw:
