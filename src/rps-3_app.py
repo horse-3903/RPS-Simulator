@@ -233,7 +233,7 @@ class RPS:
 
         if self.runnum != 0:
         # resetting data
-          self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[0:int(self.optno.get())])
+          self.df = pd.DataFrame(data=[[0,0,0]+[0]*int(self.optno.get()),[0,0,0]+[0]*int(self.optno.get())],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[0:int(self.optno.get())])
           self.statstable.item(item=1,values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
           self.statstable.item(item=2,values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
 
@@ -324,12 +324,12 @@ class RPS:
 
     # add conditions for rps-4 and rps-5
       
-    elif (p1 == 0 and p2 == 1) or (p1 == 1 and p2 == 2) or (p1 == 2 and p2 == 0):
+    elif (p1 == 0 and p2 == 1) or (p1 == 1 and p2 == 2) or (p1 == 2 and p2 == 0) or (p1 == 1 and p2 == 3) or (p1 == 2 and p2 == 3) or (p1 == 3 and p2 == 0):
       # player 2 wins
       self.update(2,"No. of Wins")
       self.wonplayerlabel.config(text="Player 2")
 
-    elif (p1 == 0 and p2 == 2) or (p1 == 1 and p2 == 0) or (p1 == 2 and p2 == 1):
+    elif (p1 == 0 and p2 == 2) or (p1 == 1 and p2 == 0) or (p1 == 2 and p2 == 1) or (p1 == 3 and p2 == 1) or (p1 == 3 and p2 == 1) or (p1 == 0 and p2 == 3):
       # player 1 wins      
       self.update(1,"No. of Wins")
       self.wonplayerlabel.config(text="Player 1")
