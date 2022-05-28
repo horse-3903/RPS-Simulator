@@ -15,13 +15,13 @@ class RPS:
   def __init__(self,root):
     self.root = root
     self.root.config(bg="white")
-    self.root.geometry("830x700")
-    self.root.title("Probability : Dissected")
+    self.root.geometry("840x450")
+    self.root.title("RPS-Simulator")
 
     self.root.focus_set()
 
     self.frame = Frame(root,bg="white")
-    self.frame.place(relx=0.5,rely=0.4,anchor="c")
+    self.frame.place(relx=0.5,rely=0.5,anchor="c")
     
     self.allchoicecols = ["No. of Rocks","No. of Papers","No. of Scissors","No. of Glues","No. of Pens"]
 
@@ -79,7 +79,7 @@ class RPS:
       widget[0].grid_forget()
       widget[1].grid_forget()
     
-    self.tempframe1 = Label(self.play1para,bg="white",fg="white",text="temporary frame ")
+    self.tempframe1 = Label(self.play1para,bg="white",fg="white",text="AMOGUSSUSNO1")
     self.tempframe1.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play1probw:
@@ -126,7 +126,7 @@ class RPS:
       widget[0].grid_forget()
       widget[1].grid_forget()
 
-    self.tempframe2 = Label(self.play2para,bg="white",fg="white",text="temporary frame ")
+    self.tempframe2 = Label(self.play2para,bg="white",fg="white",text="AMOGUSSUSNO2")
     self.tempframe2.grid(row=0,column=2,columnspan=2)
 
     for label,entry in self.play2probw:
@@ -164,8 +164,12 @@ class RPS:
     # player 1 canvas
     self.play1frame = LabelFrame(self.simframe,bg="white",text="Player 1",labelanchor="n")
     self.play1frame.grid(row=0,column=0,columnspan=2,padx=15,pady=15)
+    
     self.play1canvas = Canvas(self.play1frame,width=100,height=100,bg="white")
     self.play1canvas.grid(row=0,column=0,padx=5,pady=5)
+
+    self.play1vallabel = Label(self.play1frame,bg="white",text="None")
+    self.play1vallabel.grid(row=1,column=0,padx=5,pady=5)
 
     # vs label
     self.vslabel = Label(self.simframe,bg="white",text="vs",font="helvetica 18 bold")
@@ -174,26 +178,34 @@ class RPS:
     # player 2 canvas
     self.play2frame = LabelFrame(self.simframe,bg="white",text="Player 2",labelanchor="n")
     self.play2frame.grid(row=0,column=4,columnspan=2,padx=15,pady=15)
+
     self.play2canvas = Canvas(self.play2frame,width=100,height=100,bg="white")
-    self.play2canvas.grid(row=0,column=1,padx=5,pady=5)
+    self.play2canvas.grid(row=0,column=0,padx=5,pady=5)
+
+    self.play2vallabel = Label(self.play2frame,bg="white",text="None")
+    self.play2vallabel.grid(row=1,column=0,padx=5,pady=5)
 
     # won label
     self.wonlabel = Label(self.simframe,bg="white",text="Player Won :",font="helvetica 10")
-    self.wonlabel.grid(row=1,column=1,columnspan=2,pady=3)
+    self.wonlabel.grid(row=1,column=1,columnspan=2,pady=4)
 
     # won player label
     self.wonplayerlabel = Label(self.simframe,bg="white",text="",font="helvetica 10")
-    self.wonplayerlabel.grid(row=1,column=3,columnspan=2,pady=3)
+    self.wonplayerlabel.grid(row=1,column=3,columnspan=2,pady=4)
 
     # run label
     self.runslabel = Label(self.simframe,bg="white",text="Run Number :",font="helvetica 10")
-    self.runslabel.grid(row=2,column=1,columnspan=2,pady=3)
+    self.runslabel.grid(row=2,column=1,columnspan=2,pady=5)
 
     # run label
-    self.runnumvar = StringVar()
-    self.runnumlabel = Label(self.simframe,bg="white",textvariable=self.runnumvar,font="helvetica 10")
-    self.runnumlabel.grid(row=2,column=3,columnspan=2,pady=3)
+    self.runnumlabel = Label(self.simframe,bg="white",font="helvetica 10")
+    self.runnumlabel.grid(row=2,column=3,columnspan=2,pady=5)
 
+    # preset frame
+    self.presetframe = LabelFrame(self.frame,bg="white",text="Presets",labelanchor="n")
+    self.presetframe.grid(row=0,column=0,columnspan=2,pady=5)
+
+    
 
     # statistics frame
     self.statsframe = LabelFrame(self.frame,bg="white",text="Statistics",labelanchor="n")
@@ -226,32 +238,35 @@ class RPS:
 
   def run(self):
     try:
-      if not self.running:
-        # get number of runs
-        self.runnum = int(self.runval.get())
-        self.runtemp = self.runnum 
+      if int(self.optno.get()) < 6:
+        if not self.running:
+          # get number of runs
+          self.runnum = int(self.runval.get())
+          self.runtemp = self.runnum 
 
-        if self.runnum != 0:
-        # resetting data
-          self.df = pd.DataFrame(data=[[0,0,0]+[0]*int(self.optno.get()),[0,0,0]+[0]*int(self.optno.get())],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[0:int(self.optno.get())])
-          self.statstable.item(item=1,values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
-          self.statstable.item(item=2,values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
+          if self.runnum != 0:
+            # resetting data
+            self.reset()
 
-          if self.paused:
-            self.paused = False
-            self.pausebutton.config(text="Pause")
+            if self.paused:
+              self.paused = False
+              self.pausebutton.config(text="Pause")
 
-          # get all probabilities
-          self.play1prob = [float(i[1].get()) for i in self.play1probw[0:int(self.optno.get())]]
-          self.play2prob = [float(i[1].get()) for i in self.play2probw[0:int(self.optno.get())]]
+            # get all probabilities
+            self.play1prob = [float(i[1].get()) for i in self.play1probw[0:int(self.optno.get())]]
+            self.play2prob = [float(i[1].get()) for i in self.play2probw[0:int(self.optno.get())]]
 
-          # check that probabilities add to 1
-          if round(sum(self.play1prob)) == 1 and round(sum(self.play2prob)) == 1:
-            # start loop
-            self.running = True
-            self.loop()
-          else:
-            showerror(title="Invalid Probability Inputs",message=f"Probability rates do not add up to 1")
+            # check that probabilities add to 1
+            if round(sum(self.play1prob)) == 1 and round(sum(self.play2prob)) == 1:
+              # start loop
+              self.running = True
+              self.loop()
+            else:
+              showerror(title="Invalid Probability Inputs",message=f"Probability rates do not add up to 1")
+
+      else:
+        showwarning(title="Invalid RPS number",message="Invalid RPS number")
+        self.reset()
 
     except ValueError:
       showerror(title="Invalid Run Number Input",message="The value you inputted was invalid.\nPlease enter a number.")
@@ -270,7 +285,7 @@ class RPS:
   def loop(self):
     if self.running and self.runnum >= 1:
       # display run number
-      self.runnumvar.set(abs(self.runtemp-self.runnum+1))
+      self.runnumlabel.config(text=str(abs(self.runtemp-self.runnum+1)))
 
       self.choicedict = {
         0 : "Rocks",
@@ -289,6 +304,9 @@ class RPS:
       play2 = self.choose(self.play2prob,2)
 
       self.update(2,f"No. of {self.choicedict[play2]}")
+
+      self.play1vallabel.config(text=self.choicedict[play1][:-1])
+      self.play2vallabel.config(text=self.choicedict[play2][:-1])
 
       self.compare(play1,play2)
 
@@ -373,6 +391,8 @@ class RPS:
   def setoption(self):
     self.statstable["columns"] = ("","No. of Wins","No. of Draws","Win Rate")+tuple(self.allchoicecols[0:int(self.optno.get())])
 
+    self.df = pd.DataFrame(data=[[0]*(len(self.statstable["columns"])-1),[0]*(len(self.statstable["columns"])-1)],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[0:int(self.optno.get())])
+
     self.statstable.column("#0",width=0,stretch=NO)
     self.statstable.heading("#0",text="",anchor=CENTER)
 
@@ -439,6 +459,26 @@ class RPS:
     for label,entry in self.play2probw:
       entry.delete(0,END)
       entry.insert(0,f"{round(1/int(self.optno.get()),2):.2f}")
+
+  def reset(self):
+    # reset sim frame
+    self.play1canvas.delete("all")
+    self.play2canvas.delete("all")
+
+    self.play1vallabel.config(text="")
+    self.play2vallabel.config(text="")
+
+    # reset statistics table
+    for item in self.statstable.get_children():
+      self.statstable.delete(item)
+      
+    self.statstable.insert(parent="",index=END,iid=1,text="",values=("Player 1",0,0,"0%")+(0,)*int(self.optno.get()))
+    self.statstable.insert(parent="",index=END,iid=2,text="",values=("Player 2",0,0,"0%")+(0,)*int(self.optno.get()))
+
+    # reset dataframe
+    self.df[self.df != 0] = 0
+
+    return
 
 root = Tk()
 RPSwin = RPS(root)
