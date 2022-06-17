@@ -5,9 +5,17 @@ from checklistcombobox import ChecklistCombobox
 import numpy as np
 import pandas as pd
 from PIL import Image, ImageTk
-import os
+import os, sys
 # from matplotlib.figure import Figure
-# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2T
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 os.system("cls")
 
@@ -26,7 +34,7 @@ class RPS:
     self.allchoicecols = ["No. of Rocks","No. of Papers","No. of Scissors","No. of Glues","No. of Pens"]
 
     self.df = pd.DataFrame(data=[[0,0,0,0,0,0],[0,0,0,0,0,0]],columns=["No. of Wins","No. of Draws","Win Rate"]+self.allchoicecols[:3])
-    self.images = [ImageTk.PhotoImage(Image.open(image).resize((100,100))) for image in [f"./{path}.png" for path in ["rock","paper","scissors","glue","pen"]]]
+    self.images = [ImageTk.PhotoImage(Image.open(image).resize((100,100))) for image in [resource_path(f"images\\{path}.png") for path in ["rock","paper","scissors","glue","pen"]]]
     self.running = False
 
     # parameter frame
