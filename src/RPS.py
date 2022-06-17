@@ -347,8 +347,6 @@ class RPS:
       self.update(1,"No. of Draws")
       self.update(2,"No. of Draws")
       self.wonplayerlabel.config(text="Draw")
-
-    # add conditions for rps-5 
       
     elif (p1 == 0 and p2 == 1) or (p1 == 1 and p2 == 2) or (p1 == 2 and p2 == 0) or (p1 == 1 and p2 == 3) or (p1 == 2 and p2 == 3) or (p1 == 3 and p2 == 0):
       # player 2 wins
